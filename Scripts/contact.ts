@@ -119,7 +119,7 @@ namespace core
      * @param {string} data
      * @return {void}
      */
-    deserialize(data:string):void
+    public deserialize(data:string):void
     {
       let propertyArray: string[] = data.split(",");
       this.FullName = propertyArray[0];
