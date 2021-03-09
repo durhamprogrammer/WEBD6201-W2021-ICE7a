@@ -1,2 +1,2 @@
-// namespace core
-let core;
+let core = {};
+//# sourceMappingURL=namespace.js.map
