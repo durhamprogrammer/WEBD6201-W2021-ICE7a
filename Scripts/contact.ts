@@ -1,8 +1,9 @@
 "use strict";
 // Contact Class
 
-((core)=>{
-  class Contact 
+namespace core
+{
+  export class Contact 
   {
     // Instance Variables
     private m_fullName: string;
@@ -127,9 +128,9 @@
       this.EmailAddress = propertyArray[2];
     }
   }
+}
+  
 
-  core.Contact = Contact;
 
-})(core || (core={}));
 
 

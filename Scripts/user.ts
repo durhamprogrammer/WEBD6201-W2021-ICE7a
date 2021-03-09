@@ -1,9 +1,9 @@
 "use strict";
 // User Class
 
-((core)=>
+namespace core
 {
-  class User 
+  export class User 
   {
 
     // Instance Variables
@@ -144,6 +144,6 @@
 
   core.User = User;
 
-})(core || (core={}));
+}
 
 
