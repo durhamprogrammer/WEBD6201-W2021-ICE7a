@@ -1,4 +1,3 @@
-"use strict";
 var core;
 (function (core) {
     class User {
@@ -64,7 +63,6 @@ var core;
             this.Username = propertyArray[2];
         }
     }
-    core.User = User;
     core.User = User;
 })(core || (core = {}));
 //# sourceMappingURL=user.js.map

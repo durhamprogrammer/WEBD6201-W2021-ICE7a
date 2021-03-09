@@ -1,4 +1,4 @@
-"use strict";
+
 // User Class
 
 namespace core
@@ -141,8 +141,6 @@ namespace core
       this.Username = propertyArray[2];
     }
   }
-
-  core.User = User;
 
 }
 

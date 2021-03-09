@@ -1,4 +1,3 @@
-"use strict";
 // Contact Class
 
 namespace core
