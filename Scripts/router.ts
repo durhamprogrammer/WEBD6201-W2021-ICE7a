@@ -89,6 +89,9 @@ namespace core
     }
 }
 
+
+console.log(location);
+
 //TODO: this part needs to move to its own file:
 let router = new core.Router();
 router.AddTable(["/", 

@@ -32,6 +32,7 @@ var core;
     }
     core.Router = Router;
 })(core || (core = {}));
+console.log(location);
 let router = new core.Router();
 router.AddTable(["/",
     "/home",
