@@ -1,8 +1,9 @@
 var core;
 (function (core) {
-    function loadLink(link) {
+    function loadLink(link, data = "") {
         $(`#${router.ActiveLink}`).removeClass("active");
         router.ActiveLink = link;
+        router.LinkData = data;
         loadContent(router.ActiveLink, ActiveLinkCallBack(router.ActiveLink));
         toggleLogin();
         $(`#${router.ActiveLink}`).addClass("active");
@@ -32,7 +33,6 @@ var core;
         });
     }
     function displayHome() {
-        console.log("Home page function called");
     }
     function displayAbout() {
     }
@@ -123,7 +123,7 @@ var core;
             }
             contactList.innerHTML = data;
             $("button.edit").on("click", function () {
-                location.href = "/edit#" + $(this).val();
+                loadLink("edit", $(this).val().toString());
             });
             $("button.delete").on("click", function () {
                 if (confirm("Are you sure?")) {
@@ -137,7 +137,7 @@ var core;
         }
     }
     function displayEdit() {
-        let key = location.hash.substring(1);
+        let key = router.LinkData;
         let contact = new core.Contact();
         if (key != "") {
             contact.deserialize(localStorage.getItem(key));
@@ -199,7 +199,6 @@ var core;
     function displayRegister() {
     }
     function toggleLogin() {
-        console.log('toggleLogin');
         let contactList = $("#contact-list");
         if (sessionStorage.getItem("user")) {
             $("#loginListItem").html(`<a id="logout" class="nav-link" aria-current="page"><i class="fas fa-sign-out-alt"></i> Logout</a>`);

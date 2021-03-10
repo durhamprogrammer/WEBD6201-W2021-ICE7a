@@ -1,15 +1,23 @@
 namespace core
 {
-    function loadLink(link:string):void
+
+    /**
+     * Load page content relative to the link 
+     * optional - pass data to the link
+     *
+     * @param {string} link
+     * @param {string} [data]
+     */
+    function loadLink(link:string, data = ""):void
     {
       $(`#${router.ActiveLink}`).removeClass("active"); // removes highlighted link
       router.ActiveLink = link;
+      router.LinkData = data;
       loadContent(router.ActiveLink, ActiveLinkCallBack(router.ActiveLink));
       toggleLogin(); // add login / logout and secure links
       $(`#${router.ActiveLink}`).addClass("active"); // applies highlighted link to new page
       history.pushState({},"", router.ActiveLink); // this replaces the url displayed in the browser
     }
-
 
     /**
      * Inject the Navigation bar into the Header element and highlight the active link based on the pageName parameter
@@ -73,7 +81,6 @@ namespace core
 
     function displayHome():void
     {
-      console.log("Home page function called");
         
     }
 
@@ -223,8 +230,7 @@ namespace core
 
         $("button.edit").on("click", function(){
           
-          //TODO: This link needs to change
-          location.href = "/edit#" + $(this).val();
+          loadLink("edit", $(this).val().toString());
          });
 
          $("button.delete").on("click", function(){
@@ -244,7 +250,7 @@ namespace core
 
     function displayEdit():void
     {
-      let key = location.hash.substring(1);
+      let key = router.LinkData;
 
       let contact = new core.Contact();
 
@@ -364,7 +370,6 @@ namespace core
 
     function toggleLogin():void
     {
-      console.log('toggleLogin');
       let contactList = $("#contact-list");
       // if user is logged in
       if(sessionStorage.getItem("user"))
