@@ -1,16 +1,19 @@
 var core;
 (function (core) {
+    function loadLink(link) {
+        $(`#${router.ActiveLink}`).removeClass("active");
+        router.ActiveLink = link;
+        loadContent(router.ActiveLink, ActiveLinkCallBack(router.ActiveLink));
+        toggleLogin();
+        $(`#${router.ActiveLink}`).addClass("active");
+        history.pushState({}, "", router.ActiveLink);
+    }
     function loadHeader(pageName) {
         $.get("./Views/components/header.html", function (data) {
             $("header").html(data);
-            toggleLogin();
             $(`#${pageName}`).addClass("active");
             $("a").on("click", function () {
-                $(`#${router.ActiveLink}`).removeClass("active");
-                router.ActiveLink = $(this).attr("id");
-                loadContent(router.ActiveLink, ActiveLinkCallBack(router.ActiveLink));
-                $(`#${router.ActiveLink}`).addClass("active");
-                history.pushState({}, "", router.ActiveLink);
+                loadLink($(this).attr("id"));
             });
             $("a").on("mouseover", function () {
                 $(this).css('cursor', 'pointer');
@@ -126,10 +129,10 @@ var core;
                 if (confirm("Are you sure?")) {
                     localStorage.removeItem($(this).val().toString());
                 }
-                location.href = "/contact-list";
+                loadLink("contact-list");
             });
             $("#addButton").on("click", function () {
-                location.href = "/edit";
+                loadLink("edit");
             });
         }
     }
@@ -155,10 +158,10 @@ var core;
             contact.ContactNumber = $("#contactNumber").val().toString();
             contact.EmailAddress = $("#emailAddress").val().toString();
             localStorage.setItem(key, contact.serialize());
-            location.href = "/contact-list";
+            loadLink("contact-list");
         });
         $("#cancelButton").on("click", function () {
-            location.href = "/contact-list";
+            loadLink("contact-list");
         });
     }
     function displayLogin() {
@@ -180,7 +183,7 @@ var core;
                 if (success) {
                     sessionStorage.setItem("user", newUser.serialize());
                     messageArea.removeAttr("class").hide();
-                    location.href = "/contact-list";
+                    loadLink('contact-list');
                 }
                 else {
                     username.trigger("focus").trigger("select");
@@ -190,32 +193,51 @@ var core;
         });
         $("#cancelButton").on("click", function () {
             document.forms[0].reset();
-            location.href = "/home";
+            loadLink("home");
         });
     }
     function displayRegister() {
     }
     function toggleLogin() {
+        console.log('toggleLogin');
+        let contactList = $("#contact-list");
         if (sessionStorage.getItem("user")) {
             $("#loginListItem").html(`<a id="logout" class="nav-link" aria-current="page"><i class="fas fa-sign-out-alt"></i> Logout</a>`);
             $("#logout").on("click", function () {
                 sessionStorage.clear();
-                location.href = "/login";
+                loadLink("login");
             });
             $("#logout").on("mouseover", function () {
                 $(this).css('cursor', 'pointer');
             });
-            $(`<li class="nav-item">
-        <a id="contact-list" class="nav-link" aria-current="page"><i class="fas fa-users fa-lg"></i> Contact List</a>
-      </li>`).insertBefore("#loginListItem");
+            if (!contactList[0]) {
+                $(`<li id="contactListItem" class="nav-item">
+          <a id="contact-list" class="nav-link" aria-current="page"><i class="fas fa-users fa-lg"></i> Contact List</a>
+        </li>`).insertBefore("#loginListItem");
+            }
+            $("#contact-list").on("click", function () {
+                loadLink("contact-list");
+            });
+            $("#contact-list").on("mouseover", function () {
+                $(this).css('cursor', 'pointer');
+            });
         }
         else {
             $("#loginListItem").html(`<a id="login" class="nav-link" aria-current="page"><i class="fas fa-sign-in-alt"></i> Login</a>`);
+            $("#login").on("click", function () {
+                loadLink("login");
+            });
+            $("#login").on("mouseover", function () {
+                $(this).css('cursor', 'pointer');
+            });
+            if (contactList[0]) {
+                $("#contactListItem").remove();
+            }
         }
     }
     function authGuard() {
         if (!sessionStorage.getItem("user")) {
-            location.href = "/login";
+            loadLink("login");
         }
     }
     function display404() {

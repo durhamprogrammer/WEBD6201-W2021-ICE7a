@@ -1,5 +1,16 @@
 namespace core
 {
+    function loadLink(link:string):void
+    {
+      $(`#${router.ActiveLink}`).removeClass("active"); // removes highlighted link
+      router.ActiveLink = link;
+      loadContent(router.ActiveLink, ActiveLinkCallBack(router.ActiveLink));
+      toggleLogin(); // add login / logout and secure links
+      $(`#${router.ActiveLink}`).addClass("active"); // applies highlighted link to new page
+      history.pushState({},"", router.ActiveLink); // this replaces the url displayed in the browser
+    }
+
+
     /**
      * Inject the Navigation bar into the Header element and highlight the active link based on the pageName parameter
      *
@@ -12,9 +23,7 @@ namespace core
       $.get("./Views/components/header.html", function(data)
       {
         $("header").html(data); // load the navigation bar
-        
-        toggleLogin(); // add login / logout and secure links
-        
+      
         $(`#${pageName}`).addClass("active"); // highlight active link
 
         // loop through each anchor tag in the unordered list and 
@@ -22,11 +31,7 @@ namespace core
         // content injection
         $("a").on("click", function()
         {
-          $(`#${router.ActiveLink}`).removeClass("active"); // removes highlighted link
-          router.ActiveLink = $(this).attr("id");
-          loadContent(router.ActiveLink, ActiveLinkCallBack(router.ActiveLink));
-          $(`#${router.ActiveLink}`).addClass("active"); // applies highlighted link to new page
-          history.pushState({},"", router.ActiveLink); // this replaces the url displayed in the browser
+          loadLink($(this).attr("id"));
         });
 
         // make it look like each nav item is an active link
@@ -217,6 +222,8 @@ namespace core
         contactList.innerHTML = data;
 
         $("button.edit").on("click", function(){
+          
+          //TODO: This link needs to change
           location.href = "/edit#" + $(this).val();
          });
 
@@ -225,12 +232,12 @@ namespace core
            {
             localStorage.removeItem($(this).val().toString());
            }
-           location.href = "/contact-list"; // refresh the page
+           loadLink("contact-list"); // refresh the page
          });
 
          $("#addButton").on("click", function() 
          {
-          location.href = "/edit";
+          loadLink("edit");
          });
       }
     }
@@ -281,7 +288,7 @@ namespace core
           localStorage.setItem(key, contact.serialize());
 
           // return to the contact list
-          location.href = "/contact-list";
+          loadLink("contact-list");
           
         });
    
@@ -289,7 +296,7 @@ namespace core
       $("#cancelButton").on("click", function()
       {
         // return to the contact list
-        location.href = "/contact-list";
+        loadLink("contact-list");
       });
     }
 
@@ -329,7 +336,8 @@ namespace core
             messageArea.removeAttr("class").hide();
 
             // redirect user to secure area - contact-list.html
-            location.href = "/contact-list";
+
+            loadLink('contact-list');
           }
           else
           {
@@ -345,7 +353,7 @@ namespace core
         // clear the login form
         document.forms[0].reset();
         // return to the home page
-        location.href = "/home";
+        loadLink("home");
       });
     }
 
@@ -356,9 +364,12 @@ namespace core
 
     function toggleLogin():void
     {
+      console.log('toggleLogin');
+      let contactList = $("#contact-list");
       // if user is logged in
       if(sessionStorage.getItem("user"))
       {
+
         // swap out the login link for logout
         $("#loginListItem").html(
         `<a id="logout" class="nav-link" aria-current="page"><i class="fas fa-sign-out-alt"></i> Logout</a>`
@@ -370,7 +381,7 @@ namespace core
           sessionStorage.clear();
 
           // redirect back to login
-          location.href = "/login";
+          loadLink("login");
         });
 
         // make it look like each nav item is an active link
@@ -379,9 +390,25 @@ namespace core
           $(this).css('cursor', 'pointer');
         });
        
-        $(`<li class="nav-item">
-        <a id="contact-list" class="nav-link" aria-current="page"><i class="fas fa-users fa-lg"></i> Contact List</a>
-      </li>`).insertBefore("#loginListItem");
+        
+
+        if(!contactList[0])
+        {
+          $(`<li id="contactListItem" class="nav-item">
+          <a id="contact-list" class="nav-link" aria-current="page"><i class="fas fa-users fa-lg"></i> Contact List</a>
+        </li>`).insertBefore("#loginListItem");
+        }
+
+      $("#contact-list").on("click", function()
+      {
+       loadLink("contact-list");
+      });
+
+      // make it look like each nav item is an active link
+      $("#contact-list").on("mouseover", function()
+      {
+        $(this).css('cursor', 'pointer');
+      });
       
       }
       else
@@ -390,6 +417,22 @@ namespace core
         $("#loginListItem").html(
           `<a id="login" class="nav-link" aria-current="page"><i class="fas fa-sign-in-alt"></i> Login</a>`
           );
+
+          $("#login").on("click", function()
+          {
+           loadLink("login");
+          });
+    
+          // make it look like each nav item is an active link
+          $("#login").on("mouseover", function()
+          {
+            $(this).css('cursor', 'pointer');
+          });
+
+          if(contactList[0])
+          {
+            $("#contactListItem").remove();
+          }
       }
     }
 
@@ -398,7 +441,7 @@ namespace core
       if(!sessionStorage.getItem("user"))
       {
       // redirect back to login page
-      location.href = "/login";
+      loadLink("login");
       }
     }
 
